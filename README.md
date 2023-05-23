@@ -9,9 +9,6 @@ Basic message function: `unitree_legged_msgs`
 
 The interface between ROS and real robot: `unitree_legged_real`
 
-## Environment
-We recommand users to run this package in Ubuntu 18.04 and ROS2 eloquent environment
-
 # Dependencies
 * [unitree_legged_sdk](https://github.com/unitreerobotics): v3.5.1
 * [Lightweight Communications and Marshalling (LCM)](https://github.com/lcm-proj/lcm/releases): v1.5.0
