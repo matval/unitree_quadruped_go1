@@ -11,9 +11,9 @@ The interface between ROS and real robot: `unitree_legged_real`
 
 # Dependencies
 * Install Boost:
-    ´´´
+    ```
     sudo apt-get install libboost-all-dev
-    ´´´
+    ```
 * [unitree_legged_sdk](https://github.com/unitreerobotics): v3.5.1
 * [Lightweight Communications and Marshalling (LCM)](https://github.com/lcm-proj/lcm/releases): v1.5.0
 
