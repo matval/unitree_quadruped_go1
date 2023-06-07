@@ -26,11 +26,13 @@ Then download this package into this `~/ros_ws/src` folder.
 
 After you download this package into this folder, your folder should be like this
 ```
-~/ros2_ws/src/unitree_ros2_to_real
+~/ros2_ws/src/unitree_quadruped_go1
 ```
 
-And now download unitree_legged_sdk v3.5.1 into the path `~/ros_ws/src_unitree_ros2_to_real`
-
+Install dependencies with rosdep
+```
+rosdep install --from-paths src --ignore-src -y --skip-keys "fastcdr rti-connext-dds-5.3.1 urdfdom_headers"
+```
 
 # Build
 ```
