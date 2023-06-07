@@ -1,7 +1,5 @@
 # Introduction
-This package can send control command to real robot from ROS2. You can do low-level control(namely control all joints on robot) and high-level control(namely control the walking direction and speed of robot).
-
-This version is suitable for unitree_legged_sdk v3.5.1, namely Go1 robot.
+This repository can send control command to real robot from ROS2 and republish camera videos as rostopics.
 
 ## Packages:
 
