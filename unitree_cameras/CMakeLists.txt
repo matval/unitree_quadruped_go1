@@ -17,44 +17,54 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(OpenCV 4 REQUIRED)
 
-message("-- CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
-if("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "x86_64.*")
-  set(ARCH amd64)
+if(OpenCV_FOUND)
+    include_directories(${OpenCV_INCLUDE_DIR})
+    message(STATUS "OpenCV ${OpenCV_VERSION} FOUND")
+    message(STATUS ${OpenCV_LIBS})
+    if(${OpenCV_VERSION_MAJOR} EQUAL 4)
+        add_definitions(-DOPENCV_VERSION_4)
+    elseif(${OpenCV_VERSION_MAJOR} LESS 4)
+        add_definitions(-DOPENCV_VERSION_3)
+    endif()
 else()
-  set(ARCH arm64)
+    message(FATAL_ERROR "OpenCV Library Not Found")
 endif()
-set(EXTRA_LIBS -pthread libunitree_camera_sdk_${ARCH}.so)
 
-set(CMAKE_CXX_FLAGS "-O3")
+if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "x86_64")
+  set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/UnitreecameraSDK/lib/amd64/)
+  link_directories(${CMAKE_SOURCE_DIR}/UnitreecameraSDK/lib/amd64/)
+else()
+  set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/UnitreecameraSDK/lib/arm64/)
+  link_directories(${CMAKE_SOURCE_DIR}/UnitreecameraSDK/lib/arm64/)
+endif()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
 
 include_directories(
     include
     ${CMAKE_SOURCE_DIR}/UnitreecameraSDK/include
 )
 
-link_directories(${CMAKE_SOURCE_DIR}/UnitreecameraSDK/lib)
+set(SDKLIBS unitree_camera tstc_V4L2_xu_camera udev systemlog ${OpenCV_LIBS})
+
+install(
+    DIRECTORY ${CMAKE_SOURCE_DIR}/UnitreecameraSDK/lib/
+    DESTINATION lib
+)
+
+link_directories(
+  ${OpenCV_INCLUDE_DIRS}
+  ${CMAKE_SOURCE_DIR}/UnitreecameraSDK/lib
+)
 
 add_executable(cameras_node src/cameras_node.cpp)
-target_include_directories(cameras_node PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
+target_link_libraries(cameras_node ${SDKLIBS})
+ament_target_dependencies(cameras_node rclcpp OpenCV)
 
 install(TARGETS cameras_node
   DESTINATION lib/${PROJECT_NAME})
-
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  # the following line skips the linter which checks for copyrights
-  # uncomment the line when a copyright and license is not present in all source files
-  #set(ament_cmake_copyright_FOUND TRUE)
-  # the following line skips cpplint (only works in a git repo)
-  # uncomment the line when this package is not in a git repo
-  #set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
-endif()
 
 ament_package()
